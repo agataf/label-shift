@@ -19,10 +19,15 @@ def estimate_labelshift_ratio(y_true_val, y_pred_val, y_pred_trn, n_classes):
     C = confusion_matrix(y_true_val, y_pred_val, labels).T
     C = C / y_true_val.shape[0]
 
+    # length-1 vector of dimension n_classes, with frequencies of each class in y_pred_trn
     mu_t = calculate_marginal(y_pred_trn, n_classes)
+    
+    # inverse of the example length
     lamb = 1.0 / min(y_pred_val.shape[0], y_pred_trn.shape[0])
 
     I = np.eye(n_classes)
+    
+    # why the + lamb * I part? Also, why solve it like this?
     wt = np.linalg.solve(np.dot(C.T, C) + lamb * I, np.dot(C.T, mu_t))
     return wt
 
